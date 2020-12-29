@@ -3,12 +3,14 @@ package com.josivaniomarinho.personapi.service;
 import com.josivaniomarinho.personapi.dto.request.PersonDTO;
 import com.josivaniomarinho.personapi.dto.response.MessageResponseDTO;
 import com.josivaniomarinho.personapi.entity.Person;
+import com.josivaniomarinho.personapi.exception.PersonNotFoudException;
 import com.josivaniomarinho.personapi.mapper.PersonMapper;
 import com.josivaniomarinho.personapi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,5 +40,12 @@ public class PersonService {
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PersonDTO findById(Long id) throws PersonNotFoudException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoudException(id));
+
+        return personMapper.toDTO(person);
     }
 }

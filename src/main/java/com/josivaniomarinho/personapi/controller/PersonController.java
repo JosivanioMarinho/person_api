@@ -3,6 +3,7 @@ package com.josivaniomarinho.personapi.controller;
 import com.josivaniomarinho.personapi.dto.request.PersonDTO;
 import com.josivaniomarinho.personapi.dto.response.MessageResponseDTO;
 import com.josivaniomarinho.personapi.entity.Person;
+import com.josivaniomarinho.personapi.exception.PersonNotFoudException;
 import com.josivaniomarinho.personapi.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,10 @@ public class PersonController {
     @GetMapping
     public List<PersonDTO> listAll(){
         return personService.listAll();
+    }
+
+    @GetMapping("{/id}")
+    public PersonDTO findById(Long id) throws PersonNotFoudException {
+        return personService.findById(id);
     }
 }
