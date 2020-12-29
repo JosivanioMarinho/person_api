@@ -34,8 +34,14 @@ public class PersonController {
         return personService.listAll();
     }
 
-    @GetMapping("{/id}")
-    public PersonDTO findById(Long id) throws PersonNotFoudException {
+    @GetMapping("/{id}")
+    public PersonDTO findById(@PathVariable Long id) throws PersonNotFoudException {
         return personService.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) throws PersonNotFoudException {
+        personService.delete(id);
     }
 }
