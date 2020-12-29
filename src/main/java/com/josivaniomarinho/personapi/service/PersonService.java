@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,16 +24,15 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
+    //Save Person
     public MessageResponseDTO createPerson(PersonDTO personDTO){
         Person personToSave = personMapper.toModel(personDTO);
 
         Person savedPerson = personRepository.save(personToSave);
-        return MessageResponseDTO
-                .builder()
-                .message("Created person with ID " + savedPerson.getId())
-                .build();
+        return createMessageResponse(savedPerson.getId());
     }
 
+    //Listed people
     public List<PersonDTO> listAll() {
         List<Person> allPeople = personRepository.findAll();
         return allPeople.stream()
@@ -42,20 +40,41 @@ public class PersonService {
                 .collect(Collectors.toList());
     }
 
+    //Return person by ID
     public PersonDTO findById(Long id) throws PersonNotFoudException {
         Person person = verifyById(id);
 
         return personMapper.toDTO(person);
     }
 
+    //Delete person by iD
     public void delete(Long id) throws PersonNotFoudException {
         verifyById(id);
 
         personRepository.deleteById(id);
     }
 
+    //Updadet person by ID
+    public MessageResponseDTO updateById(Long id, PersonDTO personDTO) throws PersonNotFoudException {
+        verifyById(id);
+
+        Person personToUpdate = personMapper.toModel(personDTO);
+
+        Person updatedPerson = personRepository.save(personToUpdate);
+        return createMessageResponse(updatedPerson.getId());
+    }
+
+    //Return exception
     private Person verifyById(Long id) throws PersonNotFoudException {
         return personRepository.findById(id)
                 .orElseThrow(() -> new PersonNotFoudException(id));
+    }
+
+    //Return menssage
+    private MessageResponseDTO createMessageResponse(Long id) {
+        return MessageResponseDTO
+                .builder()
+                .message("Created person with ID " + id)
+                .build();
     }
 }
